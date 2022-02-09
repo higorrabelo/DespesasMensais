@@ -31,10 +31,11 @@ public class GUI_I extends javax.swing.JFrame {
     public GUI_I() {
         initComponents();
         Locale.setDefault(Locale.US);
+        limparCampos();
     }
     private List<Despesa> despesas = new ArrayList<>();
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    
+    int codigo = 1;
     private void popularTabela(){
     
        DespesaDao despDao = DaoFactory.criarDespesa();
@@ -50,9 +51,17 @@ public class GUI_I extends javax.swing.JFrame {
                d.getValor(),
                sdf.format(d.getVencimento())
            });
-           
+          
        }
        txtTotal.setText(String.format("%.2f", total));
+    }
+    
+    public void limparCampos(){
+        txtDespesa.setText("");
+        txtDescricao.setText("");
+        txtValor.setText(null);
+        txtVencimento.setText(null);
+        txtId.setText(String.format("%d", codigo));
     }
 
     /**
@@ -147,6 +156,7 @@ public class GUI_I extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Vivaldi", 0, 36)); // NOI18N
         jLabel7.setText("Cadastro de Despesas");
 
+        txtId.setEditable(false);
         txtId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIdActionPerformed(evt);
@@ -317,6 +327,8 @@ public class GUI_I extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
             despesas.clear();
+            codigo=1;
+            txtTotal.setText(""); 
             popularTabela(); // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -333,12 +345,14 @@ public class GUI_I extends javax.swing.JFrame {
     private void btCadastraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastraActionPerformed
            try{
             
-            int id = Integer.parseInt(txtId.getText());
+            int id = codigo;
             String despesa = txtDespesa.getText();
             String descricao = txtDescricao.getText();
             double valor = Double.parseDouble(txtValor.getText());
             Date data = sdf.parse(txtVencimento.getText());
             despesas.add(new Despesa(id,despesa,descricao,valor,data));
+            codigo++; 
+            limparCampos();
            }
            catch(ParseException e){
                throw new DespesaException("Erro na conversão de Datas");
